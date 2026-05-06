@@ -18,6 +18,12 @@ export default function Header() {
           <Link href="/about" className="hover:text-slate-900 transition-colors">
             About
           </Link>
+          <Link
+            href="/wine"
+            className="bg-[#6b0f1a] text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-[#8b1421] transition-colors"
+          >
+            Wine Store
+          </Link>
         </nav>
       </div>
       <Separator />

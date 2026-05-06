@@ -1,4 +1,4 @@
-import { Job, Company, Category, JobRequest } from '@/types';
+import { Job, Company, Category, JobRequest, Product, Brand, ProductCategory, ProductRequest } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
@@ -51,3 +51,40 @@ export const getCategories = (): Promise<Category[]> =>
 
 export const getCategory = (id: number): Promise<Category> =>
   fetchApi(`/api/categories/${id}`);
+
+// ── Products ──────────────────────────────────────────────────────────────────
+
+export const getProducts = (): Promise<Product[]> =>
+  fetchApi('/api/products');
+
+export const getProduct = (id: number): Promise<Product> =>
+  fetchApi(`/api/products/${id}`);
+
+export const getFeaturedProducts = (): Promise<Product[]> =>
+  fetchApi('/api/products/featured');
+
+export const getProductsByCategory = (category: ProductCategory): Promise<Product[]> =>
+  fetchApi(`/api/products/category/${category}`);
+
+export const getProductsByBrand = (brandId: number): Promise<Product[]> =>
+  fetchApi(`/api/products/brand/${brandId}`);
+
+export const searchProducts = (keyword: string): Promise<Product[]> =>
+  fetchApi(`/api/products/search?keyword=${encodeURIComponent(keyword)}`);
+
+export const createProduct = (data: ProductRequest): Promise<Product> =>
+  fetchApi('/api/products', { method: 'POST', body: JSON.stringify(data) });
+
+export const updateProduct = (id: number, data: ProductRequest): Promise<Product> =>
+  fetchApi(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+
+export const deleteProduct = (id: number): Promise<void> =>
+  fetchApi(`/api/products/${id}`, { method: 'DELETE' });
+
+// ── Brands ────────────────────────────────────────────────────────────────────
+
+export const getBrands = (): Promise<Brand[]> =>
+  fetchApi('/api/brands');
+
+export const getBrand = (id: number): Promise<Brand> =>
+  fetchApi(`/api/brands/${id}`);

@@ -56,3 +56,51 @@ export interface ApiError {
   timestamp: string;
   fields?: Record<string, string>;
 }
+
+// ── Wine Store Types ──────────────────────────────────────────────────────────
+
+export type ProductCategory = 'WINE' | 'BEER' | 'SPIRITS' | 'SAKE' | 'CIDER' | 'NON_ALCOHOLIC';
+
+export interface Brand {
+  id: number;
+  name: string;
+  country: string | null;
+  region: string | null;
+  logoUrl: string | null;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  imageUrl: string | null;
+  size: string | null;
+  abv: number | null;
+  varietal: string | null;
+  region: string | null;
+  category: ProductCategory;
+  brandId: number | null;
+  brandName: string | null;
+  brandCountry: string | null;
+  inventory: number;
+  isActive: boolean;
+  isFeatured: boolean;
+  createdAt: string;
+}
+
+export interface ProductRequest {
+  name: string;
+  description?: string;
+  price: number;
+  imageUrl?: string;
+  size?: string;
+  abv?: number;
+  varietal?: string;
+  region?: string;
+  category: ProductCategory;
+  brandId?: number;
+  inventory?: number;
+  isActive?: boolean;
+  isFeatured?: boolean;
+}
