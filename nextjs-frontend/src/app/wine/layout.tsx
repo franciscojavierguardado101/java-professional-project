@@ -11,7 +11,7 @@ export default function WineLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen flex flex-col bg-white">
       <WineHeader />
       <main className="flex-1">{children}</main>
-      <footer className="bg-[#1a1a1a] text-white py-12 mt-16">
+      <footer className="bg-[#1a1a1a] text-white py-12">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
           <div>
             <h4 className="font-semibold text-white mb-3">Shop</h4>
