@@ -165,6 +165,47 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
       </div>
 
+      {/* Details */}
+      <section className="mt-12 border-t border-slate-100 pt-10">
+        <h2 className="text-lg font-bold text-slate-900 mb-4">Details</h2>
+        <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-4">
+          <div>
+            <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Category</dt>
+            <dd className="text-sm font-medium text-slate-900">{CATEGORY_LABELS[product.category]}</dd>
+          </div>
+          {product.varietal && (
+            <div>
+              <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Varietal</dt>
+              <dd className="text-sm font-medium text-slate-900">{product.varietal}</dd>
+            </div>
+          )}
+          {product.region && (
+            <div>
+              <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Region</dt>
+              <dd className="text-sm font-medium text-slate-900">{product.region}</dd>
+            </div>
+          )}
+          {product.brandCountry && (
+            <div>
+              <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Country</dt>
+              <dd className="text-sm font-medium text-slate-900">{product.brandCountry}</dd>
+            </div>
+          )}
+          {product.size && (
+            <div>
+              <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Size</dt>
+              <dd className="text-sm font-medium text-slate-900">{product.size}</dd>
+            </div>
+          )}
+          {product.abv && (
+            <div>
+              <dt className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Alcohol Content</dt>
+              <dd className="text-sm font-medium text-slate-900">{product.abv}% ABV</dd>
+            </div>
+          )}
+        </dl>
+      </section>
+
       {/* Related Products */}
       {related.length > 0 && (
         <section className="mt-16">
