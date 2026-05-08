@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { getFeaturedProducts, getProducts } from '@/lib/api';
+import { getHeroBanner } from '@/lib/contentful';
 import { Product } from '@/types';
 import ProductCard from '@/components/wine/ProductCard';
+import HeroBanner from '@/components/wine/HeroBanner';
 
 const categories = [
   { label: 'Wine', slug: 'WINE', description: 'Red, white, rosé & sparkling', color: 'bg-purple-700' },
@@ -16,54 +18,26 @@ export default async function WineHomePage() {
   let allProducts: Product[] = [];
   let apiAvailable = true;
 
+  const [heroBanner, productsResult] = await Promise.allSettled([
+    getHeroBanner(),
+    Promise.all([getFeaturedProducts(), getProducts()]),
+  ]);
+
+  const heroBannerData = heroBanner.status === 'fulfilled' ? heroBanner.value : null;
+
   try {
-    [featured, allProducts] = await Promise.all([
-      getFeaturedProducts(),
-      getProducts(),
-    ]);
+    if (productsResult.status === 'fulfilled') {
+      [featured, allProducts] = productsResult.value;
+    } else {
+      apiAvailable = false;
+    }
   } catch {
     apiAvailable = false;
   }
 
   return (
     <div>
-      {/* Hero Banner */}
-      <section className="bg-gradient-to-r from-[#4a0a12] to-[#6b0f1a] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-20 flex flex-col md:flex-row items-center gap-10">
-          <div className="flex-1">
-            <p className="text-yellow-400 text-sm font-semibold uppercase tracking-wider mb-3">
-              America's Largest Wine Retailer
-            </p>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-              Discover Your Perfect Bottle
-            </h1>
-            <p className="text-white/70 text-lg mb-8 max-w-md">
-              Over 8,000 wines, 3,000 spirits, and 2,500 beers. Expert staff. Unbeatable selection.
-            </p>
-            <div className="flex gap-3">
-              <Link
-                href="/wine/products"
-                className="bg-yellow-400 text-[#4a0a12] font-semibold px-6 py-3 rounded hover:bg-yellow-300 transition-colors"
-              >
-                Shop All
-              </Link>
-              <Link
-                href="/wine/category/WINE"
-                className="border border-white/40 text-white font-semibold px-6 py-3 rounded hover:bg-white/10 transition-colors"
-              >
-                Browse Wine
-              </Link>
-            </div>
-          </div>
-          <div className="flex-1 hidden md:flex justify-center">
-            <div className="w-64 h-64 bg-white/10 rounded-full flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="white" className="w-32 h-32 opacity-40">
-                <path d="M20 3H4v10c0 3.87 3.13 7 7 7s7-3.13 7-7V8h2V3zm-2 10c0 2.76-2.24 5-5 5s-5-2.24-5-5V5h10v8z"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroBanner data={heroBannerData} />
 
       {/* Category Grid */}
       <section className="max-w-7xl mx-auto px-4 py-12">
