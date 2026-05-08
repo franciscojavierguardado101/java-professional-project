@@ -104,6 +104,42 @@ export async function getProductCategories(): Promise<ProductCategoryFields[]> {
   }
 }
 
+// ── Product Detail overlay ────────────────────────────────────────────────────
+// Contentful adds image, availability toggle, and producer label to a product.
+// Matched to Spring Boot products via productId field.
+
+export interface ProductDetailFields {
+  productId: number;
+  productImage?: Asset;
+  availableToPurchase?: boolean;
+  producerLabel?: string;
+}
+
+interface ProductDetailSkeleton extends EntrySkeletonType {
+  contentTypeId: 'productDetail';
+  fields: ProductDetailFields;
+}
+
+export async function getProductDetail(
+  productId: number
+): Promise<ProductDetailFields | null> {
+  if (!contentfulClient) return null;
+  try {
+    const entries = await contentfulClient.getEntries<ProductDetailSkeleton>({
+      content_type: 'productDetail',
+      limit: 50,
+      include: 1,
+    });
+    const match = entries.items.find(
+      (item) => (item.fields as ProductDetailFields).productId === productId
+    );
+    if (!match) return null;
+    return match.fields as ProductDetailFields;
+  } catch {
+    return null;
+  }
+}
+
 // ── Page (component-based landing pages) ─────────────────────────────────────
 // Equivalent of a Drupal node with field_components (Paragraphs field).
 // The components array holds entries of any component content type.

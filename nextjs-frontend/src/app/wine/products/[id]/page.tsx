@@ -1,8 +1,10 @@
 import { getProduct, getProductsByCategory } from '@/lib/api';
+import { getProductDetail, getAssetUrl } from '@/lib/contentful';
 import { Product } from '@/types';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '@/components/wine/ProductCard';
+import AddToCart from '@/components/wine/AddToCart';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -40,13 +42,28 @@ export default async function ProductDetailPage({ params }: PageProps) {
     throw err;
   }
 
+  // Contentful overlay — fetched in parallel with related products above;
+  // null when Contentful is not configured or has no entry for this productId.
+  const detail = await getProductDetail(productId);
+
+  // Image: Contentful upload first, then Spring Boot imageUrl, then SVG placeholder
+  const imageUrl = getAssetUrl(detail?.productImage) ?? product.imageUrl ?? null;
+
+  // "Available to Purchase" controls whether Add to Cart is shown.
+  // Defaults to true when the Contentful entry doesn't exist yet so products
+  // are always purchasable before a content editor explicitly disables them.
+  const availableToPurchase = detail?.availableToPurchase ?? true;
+
+  // "PRODUCER" label is editable from Contentful; falls back to the hard label.
+  const producerLabel = detail?.producerLabel ?? 'Producer';
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       {/* Breadcrumb */}
       <nav className="text-sm text-slate-500 mb-6 flex gap-2 items-center">
         <Link href="/wine" className="hover:text-slate-900 transition-colors">Wine Store</Link>
         <span>/</span>
-        <Link href={`/wine/category/${product.category}`} className="hover:text-slate-900 transition-colors">
+        <Link href={`/wine/category/${product.category.toLowerCase()}`} className="hover:text-slate-900 transition-colors">
           {CATEGORY_LABELS[product.category] ?? product.category}
         </Link>
         <span>/</span>
@@ -56,9 +73,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
       <div className="grid md:grid-cols-2 gap-12">
         {/* Product image */}
         <div className="bg-slate-50 rounded-xl flex items-center justify-center aspect-square">
-          {product.imageUrl ? (
+          {imageUrl ? (
             <img
-              src={product.imageUrl}
+              src={imageUrl}
               alt={product.name}
               className="w-full h-full object-contain p-8"
             />
@@ -116,31 +133,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <p className="text-slate-600 leading-relaxed mb-8">{product.description}</p>
           )}
 
-          {/* Add to cart */}
-          <div className="flex gap-3">
-            <div className="flex items-center border border-slate-200 rounded">
-              <button className="px-3 py-2 text-slate-600 hover:bg-slate-50 transition-colors">-</button>
-              <span className="px-4 py-2 text-sm font-medium border-x border-slate-200">1</span>
-              <button className="px-3 py-2 text-slate-600 hover:bg-slate-50 transition-colors">+</button>
+          {/* Add to Cart — controlled by Contentful "Available to Purchase" boolean */}
+          {availableToPurchase ? (
+            <div>
+              <AddToCart productName={product.name} />
+              {product.inventory <= 5 && product.inventory > 0 && (
+                <p className="text-orange-600 text-sm mt-3 font-medium">
+                  Only {product.inventory} left in stock
+                </p>
+              )}
+              {product.inventory === 0 && (
+                <p className="text-red-600 text-sm mt-3 font-medium">Out of stock</p>
+              )}
             </div>
-            <button className="flex-1 bg-[#6b0f1a] text-white font-semibold py-2 px-6 rounded hover:bg-[#8b1421] transition-colors">
-              Add to Cart
-            </button>
-          </div>
-
-          {product.inventory <= 5 && product.inventory > 0 && (
-            <p className="text-orange-600 text-sm mt-3 font-medium">
-              Only {product.inventory} left in stock
+          ) : (
+            <p className="text-slate-500 text-sm italic">
+              This item is not currently available for online purchase. Contact your local store.
             </p>
           )}
-          {product.inventory === 0 && (
-            <p className="text-red-600 text-sm mt-3 font-medium">Out of stock</p>
-          )}
 
-          {/* Brand info */}
+          {/* Producer section */}
           {product.brandName && (
             <div className="mt-8 pt-6 border-t border-slate-100">
-              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Producer</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">{producerLabel}</p>
               <p className="font-medium text-slate-900">{product.brandName}</p>
               {product.brandCountry && (
                 <p className="text-sm text-slate-500">{product.brandCountry}</p>
