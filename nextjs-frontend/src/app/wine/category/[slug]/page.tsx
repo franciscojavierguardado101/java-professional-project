@@ -1,4 +1,5 @@
 import { getProductsByCategory } from '@/lib/api';
+import { getProductCategories } from '@/lib/contentful';
 import { Product, ProductCategory } from '@/types';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/wine/ProductCard';
@@ -38,9 +39,16 @@ export default async function CategoryPage({ params }: PageProps) {
   let products: Product[] = [];
   let apiAvailable = true;
 
-  try {
-    products = await getProductsByCategory(category as ProductCategory);
-  } catch {
+  const [categories, productsResult] = await Promise.allSettled([
+    getProductCategories(),
+    getProductsByCategory(category as ProductCategory),
+  ]);
+
+  const categoryList = categories.status === 'fulfilled' ? categories.value : [];
+
+  if (productsResult.status === 'fulfilled') {
+    products = productsResult.value;
+  } else {
     apiAvailable = false;
   }
 
@@ -60,7 +68,7 @@ export default async function CategoryPage({ params }: PageProps) {
 
       <div className="flex items-start gap-8">
         <aside className="w-48 shrink-0 hidden md:block">
-          <ProductFilters activeCategory={category as ProductCategory} />
+          <ProductFilters activeCategory={category} categories={categoryList} />
         </aside>
 
         <div className="flex-1">

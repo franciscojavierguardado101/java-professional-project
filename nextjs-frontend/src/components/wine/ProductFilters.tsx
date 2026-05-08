@@ -1,20 +1,12 @@
 import Link from 'next/link';
-import { ProductCategory } from '@/types';
+import { ProductCategoryFields } from '@/lib/contentful';
 
 interface ProductFiltersProps {
-  activeCategory?: ProductCategory;
+  activeCategory?: string;
+  categories: ProductCategoryFields[];
 }
 
-const categories: { label: string; slug: ProductCategory }[] = [
-  { label: 'Wine', slug: 'WINE' },
-  { label: 'Beer', slug: 'BEER' },
-  { label: 'Spirits', slug: 'SPIRITS' },
-  { label: 'Sake', slug: 'SAKE' },
-  { label: 'Cider', slug: 'CIDER' },
-  { label: 'Non-Alcoholic', slug: 'NON_ALCOHOLIC' },
-];
-
-export default function ProductFilters({ activeCategory }: ProductFiltersProps) {
+export default function ProductFilters({ activeCategory, categories }: ProductFiltersProps) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wide">Category</h3>
@@ -32,11 +24,11 @@ export default function ProductFilters({ activeCategory }: ProductFiltersProps) 
           </Link>
         </li>
         {categories.map((cat) => (
-          <li key={cat.slug}>
+          <li key={cat.apiValue}>
             <Link
-              href={`/wine/products?category=${cat.slug}`}
+              href={`/wine/products?category=${cat.apiValue}`}
               className={`block text-sm px-2 py-1.5 rounded transition-colors ${
-                activeCategory === cat.slug
+                activeCategory === cat.apiValue
                   ? 'bg-[#6b0f1a] text-white font-medium'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}

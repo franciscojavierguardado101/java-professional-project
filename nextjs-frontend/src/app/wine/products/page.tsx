@@ -1,5 +1,6 @@
 import { getProducts, searchProducts } from '@/lib/api';
-import { Product, ProductCategory } from '@/types';
+import { getProductCategories } from '@/lib/contentful';
+import { Product } from '@/types';
 import ProductCard from '@/components/wine/ProductCard';
 import ProductFilters from '@/components/wine/ProductFilters';
 
@@ -7,26 +8,24 @@ interface PageProps {
   searchParams: Promise<{ search?: string; category?: string }>;
 }
 
-const CATEGORY_LABELS: Record<ProductCategory, string> = {
-  WINE: 'Wine',
-  BEER: 'Beer',
-  SPIRITS: 'Spirits',
-  SAKE: 'Sake',
-  CIDER: 'Cider',
-  NON_ALCOHOLIC: 'Non-Alcoholic',
-};
-
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const keyword = params.search ?? '';
-  const categoryFilter = params.category as ProductCategory | undefined;
+  const categoryFilter = params.category;
 
   let products: Product[] = [];
   let apiAvailable = true;
 
-  try {
-    products = keyword ? await searchProducts(keyword) : await getProducts();
-  } catch {
+  const [categories, productsResult] = await Promise.allSettled([
+    getProductCategories(),
+    keyword ? searchProducts(keyword) : getProducts(),
+  ]);
+
+  const categoryList = categories.status === 'fulfilled' ? categories.value : [];
+
+  if (productsResult.status === 'fulfilled') {
+    products = productsResult.value;
+  } else {
     apiAvailable = false;
   }
 
@@ -34,21 +33,18 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     ? products.filter((p) => p.category === categoryFilter)
     : products;
 
+  const activeLabel = categoryList.find((c) => c.apiValue === categoryFilter)?.label;
   const heading = keyword
     ? `Results for "${keyword}"`
-    : categoryFilter
-    ? CATEGORY_LABELS[categoryFilter]
-    : 'All Products';
+    : activeLabel ?? 'All Products';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-start gap-8">
-        {/* Sidebar filters */}
         <aside className="w-48 shrink-0 hidden md:block">
-          <ProductFilters activeCategory={categoryFilter} />
+          <ProductFilters activeCategory={categoryFilter} categories={categoryList} />
         </aside>
 
-        {/* Main content */}
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
             <div>

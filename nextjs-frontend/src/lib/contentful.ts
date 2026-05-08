@@ -63,6 +63,47 @@ export async function getHeroBanner(): Promise<HeroBannerFields | null> {
   }
 }
 
+// ── Product Categories ────────────────────────────────────────────────────────
+// Managed in Contentful so editors can rename, reorder, or add categories
+// without touching code. apiValue maps to the Spring Boot ProductCategory enum.
+
+export interface ProductCategoryFields {
+  label: string;
+  apiValue: string;
+  sortOrder?: number;
+}
+
+// Shown when Contentful is unavailable or has no entries yet
+const FALLBACK_CATEGORIES: ProductCategoryFields[] = [
+  { label: 'Wine',          apiValue: 'WINE',          sortOrder: 1 },
+  { label: 'Beer',          apiValue: 'BEER',          sortOrder: 2 },
+  { label: 'Spirits',       apiValue: 'SPIRITS',       sortOrder: 3 },
+  { label: 'Sake',          apiValue: 'SAKE',          sortOrder: 4 },
+  { label: 'Cider',         apiValue: 'CIDER',         sortOrder: 5 },
+  { label: 'Non-Alcoholic', apiValue: 'NON_ALCOHOLIC', sortOrder: 6 },
+];
+
+interface ProductCategorySkeleton extends EntrySkeletonType {
+  contentTypeId: 'productCategory';
+  fields: ProductCategoryFields;
+}
+
+export async function getProductCategories(): Promise<ProductCategoryFields[]> {
+  if (!contentfulClient) return FALLBACK_CATEGORIES;
+  try {
+    const entries = await contentfulClient.getEntries<ProductCategorySkeleton>({
+      content_type: 'productCategory',
+      limit: 50,
+    });
+    if (entries.items.length === 0) return FALLBACK_CATEGORIES;
+    return entries.items
+      .map((item) => item.fields as ProductCategoryFields)
+      .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
+  } catch {
+    return FALLBACK_CATEGORIES;
+  }
+}
+
 // ── Page (component-based landing pages) ─────────────────────────────────────
 // Equivalent of a Drupal node with field_components (Paragraphs field).
 // The components array holds entries of any component content type.
