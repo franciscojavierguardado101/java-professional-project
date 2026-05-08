@@ -4,12 +4,14 @@
 
 export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
 echo "Starting Spring Boot on :8080..."
-cd spring-boot-api && ./mvnw spring-boot:run &
+cd "$REPO_ROOT/spring-boot-api" && ./mvnw spring-boot:run &
 SPRING_PID=$!
 
 echo "Starting Next.js on :3000..."
-cd ../nextjs-frontend && npm run dev &
+cd "$REPO_ROOT/nextjs-frontend" && npm run dev &
 NEXT_PID=$!
 
 # Kill both on Ctrl+C
