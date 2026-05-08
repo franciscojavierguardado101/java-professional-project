@@ -1,4 +1,4 @@
-import { createClient, ContentfulClientApi, EntrySkeletonType, Asset } from 'contentful';
+import { createClient, ContentfulClientApi, EntrySkeletonType, Asset, Entry } from 'contentful';
 
 // Only create the client when credentials are present.
 // Returns null when CONTENTFUL_SPACE_ID / CONTENTFUL_ACCESS_TOKEN are not set,
@@ -58,6 +58,42 @@ export async function getHeroBanner(): Promise<HeroBannerFields | null> {
     });
     if (entries.items.length === 0) return null;
     return entries.items[0].fields as HeroBannerFields;
+  } catch {
+    return null;
+  }
+}
+
+// ── Page (component-based landing pages) ─────────────────────────────────────
+// Equivalent of a Drupal node with field_components (Paragraphs field).
+// The components array holds entries of any component content type.
+
+export interface PageFields {
+  title: string;
+  slug: string;
+  // Each item is an Entry whose contentType can be heroBanner, promoSection, etc.
+  // We type it as Entry<EntrySkeletonType> and switch on sys.contentType.sys.id at render time.
+  components?: Entry<EntrySkeletonType>[];
+}
+
+interface PageSkeleton extends EntrySkeletonType {
+  contentTypeId: 'page';
+  fields: PageFields;
+}
+
+export async function getPageBySlug(slug: string): Promise<PageFields | null> {
+  if (!contentfulClient) return null;
+  try {
+    const entries = await contentfulClient.getEntries<PageSkeleton>({
+      content_type: 'page',
+      limit: 100,
+      include: 2, // resolve linked component entries (like Drupal's entity_reference depth)
+    });
+    if (entries.items.length === 0) return null;
+    const match = entries.items.find(
+      (item) => (item.fields as PageFields).slug === slug
+    );
+    if (!match) return null;
+    return match.fields as PageFields;
   } catch {
     return null;
   }
