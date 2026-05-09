@@ -9,6 +9,9 @@ export default function Header() {
           JobBoard
         </Link>
         <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
+          <Link href="/bio" className="hover:text-slate-900 transition-colors">
+            Bio
+          </Link>
           <Link href="/jobs" className="hover:text-slate-900 transition-colors">
             Browse Jobs
           </Link>

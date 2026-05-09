@@ -15,6 +15,7 @@ export async function getIntroduction(): Promise<Introduction | null> {
       name:         String(f.name ?? ''),
       stackDetails: String(f.stackDetails ?? ''),
       color:        (f.color as Introduction['color']) ?? 'Dark Gold',
+      nameLink:     f.nameLink ? String(f.nameLink) : null,
     };
   } catch {
     return null;

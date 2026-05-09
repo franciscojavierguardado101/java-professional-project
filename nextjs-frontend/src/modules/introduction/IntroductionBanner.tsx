@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getIntroduction } from './contentful';
 import { IntroductionColor } from './types';
 
@@ -18,6 +19,24 @@ export default async function IntroductionBanner() {
   if (!data) return null;
 
   const bgStyle = BACKGROUNDS[data.color] ?? BACKGROUNDS['Dark Gold'];
+
+  const nameEl = (
+    <h2
+      style={{
+        color: '#ffffff',
+        fontSize: '22px',
+        fontWeight: 700,
+        lineHeight: 1.2,
+        margin: 0,
+        letterSpacing: '-0.5px',
+        textDecoration: data.nameLink ? 'underline' : 'none',
+        textUnderlineOffset: '3px',
+        cursor: data.nameLink ? 'pointer' : 'default',
+      }}
+    >
+      {data.name}
+    </h2>
+  );
 
   return (
     <section
@@ -41,7 +60,7 @@ export default async function IntroductionBanner() {
           gap: '40px',
         }}
       >
-        {/* LEFT — Name, outside the card */}
+        {/* LEFT — Name (links to nameLink if set in Contentful) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <p
             style={{
@@ -55,21 +74,16 @@ export default async function IntroductionBanner() {
           >
             Full Stack Developer
           </p>
-          <h2
-            style={{
-              color: '#ffffff',
-              fontSize: '22px',
-              fontWeight: 700,
-              lineHeight: 1.2,
-              margin: 0,
-              letterSpacing: '-0.5px',
-            }}
-          >
-            {data.name}
-          </h2>
+          {data.nameLink ? (
+            <Link href={data.nameLink} style={{ textDecoration: 'none' }}>
+              {nameEl}
+            </Link>
+          ) : (
+            nameEl
+          )}
         </div>
 
-        {/* RIGHT — Black card containing only Stack Details */}
+        {/* RIGHT — Black card with Stack Details */}
         <div
           style={{
             backgroundColor: 'rgb(0, 0, 0)',

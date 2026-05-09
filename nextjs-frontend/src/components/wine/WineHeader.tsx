@@ -32,6 +32,7 @@ export default function WineHeader() {
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <span>Free shipping on orders over $49</span>
           <div className="flex gap-4">
+            <Link href="/bio"  className="hover:underline">Bio</Link>
             <Link href="/wine" className="hover:underline">Wine Store</Link>
             <Link href="/jobs" className="hover:underline">Job Board</Link>
           </div>

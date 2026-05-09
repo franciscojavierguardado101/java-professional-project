@@ -6,6 +6,7 @@ export interface IntroductionFields {
   name: string;
   stackDetails: string;
   color: IntroductionColor;
+  nameLink?: string;
 }
 
 export interface IntroductionSkeleton extends EntrySkeletonType {
@@ -17,4 +18,5 @@ export interface Introduction {
   name: string;
   stackDetails: string;
   color: IntroductionColor;
+  nameLink: string | null;
 }
