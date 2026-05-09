@@ -1,4 +1,4 @@
-import { EntrySkeletonType } from 'contentful';
+import { EntrySkeletonType, EntryFieldTypes } from 'contentful';
 
 export type BioColor =
   | 'Gold Dark'
@@ -13,16 +13,16 @@ export type BioColor =
 export interface BioSkeleton extends EntrySkeletonType {
   contentTypeId: 'bio';
   fields: {
-    name: string;
-    description: string;
-    stack: string[];
-    color: BioColor;
+    name:        EntryFieldTypes.Symbol;
+    description: EntryFieldTypes.Text;
+    stack:       EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
+    color:       EntryFieldTypes.Symbol;
   };
 }
 
 export interface Bio {
-  name: string;
+  name:        string;
   description: string;
-  stack: string[];
-  color: BioColor;
+  stack:       string[];
+  color:       BioColor;
 }
