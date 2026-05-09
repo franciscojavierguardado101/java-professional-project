@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Product } from '@/types';
+import { WineProduct } from '@/lib/contentful';
 
 interface ProductCardProps {
-  product: Product;
+  product: WineProduct;
 }
 
 function formatPrice(price: number) {
@@ -10,26 +10,26 @@ function formatPrice(price: number) {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  WINE: 'bg-purple-100 text-purple-800',
-  BEER: 'bg-amber-100 text-amber-800',
-  SPIRITS: 'bg-orange-100 text-orange-800',
-  SAKE: 'bg-pink-100 text-pink-800',
-  CIDER: 'bg-green-100 text-green-800',
+  WINE:          'bg-purple-100 text-purple-800',
+  BEER:          'bg-amber-100 text-amber-800',
+  SPIRITS:       'bg-orange-100 text-orange-800',
+  SAKE:          'bg-pink-100 text-pink-800',
+  CIDER:         'bg-green-100 text-green-800',
   NON_ALCOHOLIC: 'bg-blue-100 text-blue-800',
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
-      href={`/wine/products/${product.id}`}
+      href={`/wine/products/${product.slug}`}
       className="group flex flex-col bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
     >
-      {/* Image placeholder */}
+      {/* Image */}
       <div className="aspect-[3/4] bg-slate-50 flex items-center justify-center relative overflow-hidden">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
-            alt={product.name}
+            alt={product.title}
             className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
@@ -53,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.category}
         </span>
         <h3 className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2 group-hover:text-[#6b0f1a] transition-colors">
-          {product.name}
+          {product.title}
         </h3>
         {product.brandName && (
           <p className="text-xs text-slate-500">{product.brandName}</p>

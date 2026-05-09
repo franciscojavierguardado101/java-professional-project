@@ -1,12 +1,12 @@
-import { getProduct, getProductsByCategory } from '@/lib/api';
-import { Product } from '@/types';
+import { getContentfulProductBySlug, getContentfulProductsByCategory } from '@/lib/contentful';
+import { WineProduct } from '@/lib/contentful';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '@/components/wine/ProductCard';
 import AddToCart from '@/components/wine/AddToCart';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 function formatPrice(price: number) {
@@ -14,32 +14,24 @@ function formatPrice(price: number) {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  WINE: 'Wine',
-  BEER: 'Beer',
-  SPIRITS: 'Spirits',
-  SAKE: 'Sake',
-  CIDER: 'Cider',
+  WINE:          'Wine',
+  BEER:          'Beer',
+  SPIRITS:       'Spirits',
+  SAKE:          'Sake',
+  CIDER:         'Cider',
   NON_ALCOHOLIC: 'Non-Alcoholic',
 };
 
 export default async function ProductDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  const productId = parseInt(id, 10);
+  const { slug } = await params;
 
-  if (isNaN(productId)) notFound();
+  const product: WineProduct | null = await getContentfulProductBySlug(slug);
+  if (!product) notFound();
 
-  let product: Product;
-  let related: Product[] = [];
+  const categoryProducts = await getContentfulProductsByCategory(product.category);
+  const related = categoryProducts.filter((p) => p.slug !== product.slug).slice(0, 5);
 
-  try {
-    product = await getProduct(productId);
-    const categoryProducts = await getProductsByCategory(product.category);
-    related = categoryProducts.filter((p) => p.id !== product.id).slice(0, 5);
-  } catch (err: unknown) {
-    const status = (err as { status?: number })?.status;
-    if (status === 404) notFound();
-    throw err;
-  }
+  const producerLabel = product.producerLabel ?? 'Producer';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
@@ -51,7 +43,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {CATEGORY_LABELS[product.category] ?? product.category}
         </Link>
         <span>/</span>
-        <span className="text-slate-800">{product.name}</span>
+        <span className="text-slate-800">{product.title}</span>
       </nav>
 
       <div className="grid md:grid-cols-2 gap-12">
@@ -60,7 +52,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
-              alt={product.name}
+              alt={product.title}
               className="w-full h-full object-contain p-8"
             />
           ) : (
@@ -80,7 +72,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product.brandName}
             </p>
           )}
-          <h1 className="text-3xl font-bold text-slate-900 mb-3">{product.name}</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-3">{product.title}</h1>
 
           <div className="text-4xl font-bold text-slate-900 mb-6">
             {formatPrice(product.price)}
@@ -90,21 +82,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <p className="text-slate-600 leading-relaxed mb-8">{product.description}</p>
           )}
 
-          <AddToCart productName={product.name} />
-
-          {product.inventory <= 5 && product.inventory > 0 && (
-            <p className="text-orange-600 text-sm mt-3 font-medium">
-              Only {product.inventory} left in stock
+          {/* Add to Cart — controlled by availableToPurchase in Contentful */}
+          {product.availableToPurchase ? (
+            <div>
+              <AddToCart productName={product.title} />
+              {product.inventory <= 5 && product.inventory > 0 && (
+                <p className="text-orange-600 text-sm mt-3 font-medium">
+                  Only {product.inventory} left in stock
+                </p>
+              )}
+              {product.inventory === 0 && (
+                <p className="text-red-600 text-sm mt-3 font-medium">Out of stock</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-slate-500 text-sm italic">
+              This item is not currently available for online purchase. Contact your local store.
             </p>
-          )}
-          {product.inventory === 0 && (
-            <p className="text-red-600 text-sm mt-3 font-medium">Out of stock</p>
           )}
 
           {/* Producer */}
           {product.brandName && (
             <div className="mt-8 pt-6 border-t border-slate-100">
-              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Producer</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">{producerLabel}</p>
               <p className="font-medium text-slate-900">{product.brandName}</p>
               {product.brandCountry && (
                 <p className="text-sm text-slate-500">{product.brandCountry}</p>
@@ -163,7 +163,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.slug} product={p} />
             ))}
           </div>
         </section>

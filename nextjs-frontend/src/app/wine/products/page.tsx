@@ -1,6 +1,5 @@
-import { getProducts, searchProducts } from '@/lib/api';
-import { getProductCategories } from '@/lib/contentful';
-import { Product } from '@/types';
+import { getContentfulProducts, searchContentfulProducts, getProductCategories } from '@/lib/contentful';
+import { WineProduct } from '@/lib/contentful';
 import ProductCard from '@/components/wine/ProductCard';
 import ProductFilters from '@/components/wine/ProductFilters';
 
@@ -13,27 +12,16 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const keyword = params.search ?? '';
   const categoryFilter = params.category;
 
-  let products: Product[] = [];
-  let apiAvailable = true;
-
-  const [categories, productsResult] = await Promise.allSettled([
+  const [categories, products] = await Promise.all([
     getProductCategories(),
-    keyword ? searchProducts(keyword) : getProducts(),
+    keyword ? searchContentfulProducts(keyword) : getContentfulProducts(),
   ]);
 
-  const categoryList = categories.status === 'fulfilled' ? categories.value : [];
-
-  if (productsResult.status === 'fulfilled') {
-    products = productsResult.value;
-  } else {
-    apiAvailable = false;
-  }
-
-  const filtered = categoryFilter
+  const filtered: WineProduct[] = categoryFilter
     ? products.filter((p) => p.category === categoryFilter)
     : products;
 
-  const activeLabel = categoryList.find((c) => c.apiValue === categoryFilter)?.label;
+  const activeLabel = categories.find((c) => c.apiValue === categoryFilter)?.label;
   const heading = keyword
     ? `Results for "${keyword}"`
     : activeLabel ?? 'All Products';
@@ -42,27 +30,18 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-start gap-8">
         <aside className="w-48 shrink-0 hidden md:block">
-          <ProductFilters activeCategory={categoryFilter} categories={categoryList} />
+          <ProductFilters activeCategory={categoryFilter} categories={categories} />
         </aside>
 
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">{heading}</h1>
-              {apiAvailable && (
-                <p className="text-sm text-slate-500 mt-1">{filtered.length} products</p>
-              )}
+              <p className="text-sm text-slate-500 mt-1">{filtered.length} products</p>
             </div>
           </div>
 
-          {!apiAvailable && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800 mb-6">
-              Products are unavailable — the Spring Boot API is not running.
-              Start it with: <code className="font-mono bg-amber-100 px-1 rounded">cd spring-boot-api && ./mvnw spring-boot:run</code>
-            </div>
-          )}
-
-          {filtered.length === 0 && apiAvailable ? (
+          {filtered.length === 0 ? (
             <div className="text-center py-20 text-slate-400">
               <p className="text-lg font-medium">No products found</p>
               <p className="text-sm mt-1">Try a different search or browse all products.</p>
@@ -70,7 +49,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.slug} product={product} />
               ))}
             </div>
           )}

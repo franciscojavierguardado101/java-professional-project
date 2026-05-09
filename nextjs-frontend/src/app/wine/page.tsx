@@ -1,43 +1,27 @@
 import Link from 'next/link';
-import { getFeaturedProducts, getProducts } from '@/lib/api';
-import { getHeroBanner } from '@/lib/contentful';
-import { Product } from '@/types';
+import { getHeroBanner, getContentfulFeaturedProducts, getContentfulProducts } from '@/lib/contentful';
+import { WineProduct } from '@/lib/contentful';
 import ProductCard from '@/components/wine/ProductCard';
 import HeroBanner from '@/components/wine/HeroBanner';
 
 const categories = [
-  { label: 'Wine', slug: 'WINE', description: 'Red, white, rosé & sparkling', color: 'bg-purple-700' },
-  { label: 'Beer', slug: 'BEER', description: 'Craft, imports & classics', color: 'bg-amber-600' },
+  { label: 'Wine',    slug: 'WINE',    description: 'Red, white, rosé & sparkling', color: 'bg-purple-700' },
+  { label: 'Beer',    slug: 'BEER',    description: 'Craft, imports & classics',    color: 'bg-amber-600'  },
   { label: 'Spirits', slug: 'SPIRITS', description: 'Whiskey, tequila, gin & more', color: 'bg-orange-700' },
-  { label: 'Sake', slug: 'SAKE', description: 'Premium Japanese sake', color: 'bg-pink-600' },
-  { label: 'Cider', slug: 'CIDER', description: 'Hard cider & fruit wines', color: 'bg-green-600' },
+  { label: 'Sake',    slug: 'SAKE',    description: 'Premium Japanese sake',         color: 'bg-pink-600'   },
+  { label: 'Cider',   slug: 'CIDER',   description: 'Hard cider & fruit wines',      color: 'bg-green-600'  },
 ];
 
 export default async function WineHomePage() {
-  let featured: Product[] = [];
-  let allProducts: Product[] = [];
-  let apiAvailable = true;
-
-  const [heroBanner, productsResult] = await Promise.allSettled([
+  const [heroBanner, featured, allProducts] = await Promise.all([
     getHeroBanner(),
-    Promise.all([getFeaturedProducts(), getProducts()]),
+    getContentfulFeaturedProducts(),
+    getContentfulProducts(),
   ]);
-
-  const heroBannerData = heroBanner.status === 'fulfilled' ? heroBanner.value : null;
-
-  try {
-    if (productsResult.status === 'fulfilled') {
-      [featured, allProducts] = productsResult.value;
-    } else {
-      apiAvailable = false;
-    }
-  } catch {
-    apiAvailable = false;
-  }
 
   return (
     <div>
-      <HeroBanner data={heroBannerData} />
+      <HeroBanner data={heroBanner} />
 
       {/* Category Grid */}
       <section className="max-w-7xl mx-auto px-4 py-12">
@@ -56,16 +40,6 @@ export default async function WineHomePage() {
         </div>
       </section>
 
-      {/* API unavailable notice */}
-      {!apiAvailable && (
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-            Products are unavailable — the Spring Boot API is not running.
-            Start it with: <code className="font-mono bg-amber-100 px-1 rounded">cd spring-boot-api && ./mvnw spring-boot:run</code>
-          </div>
-        </div>
-      )}
-
       {/* Featured Products */}
       {featured.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-12">
@@ -76,14 +50,14 @@ export default async function WineHomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {featured.map((product: WineProduct) => (
+              <ProductCard key={product.slug} product={product} />
             ))}
           </div>
         </section>
       )}
 
-      {/* All Products Preview */}
+      {/* New Arrivals */}
       {allProducts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-12 border-t border-slate-100">
           <div className="flex items-center justify-between mb-6">
@@ -93,8 +67,8 @@ export default async function WineHomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {allProducts.slice(0, 6).map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {allProducts.slice(0, 6).map((product: WineProduct) => (
+              <ProductCard key={product.slug} product={product} />
             ))}
           </div>
         </section>
