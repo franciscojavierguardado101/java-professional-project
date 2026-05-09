@@ -1,13 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useCart } from '@/lib/cart/context';
 
-interface AddToCartProps {
-  productName: string;
+interface ProductForCart {
+  slug: string;
+  title: string;
+  price: number;
+  imageUrl: string | null;
+  size: string | null;
+  brandName: string | null;
 }
 
-export default function AddToCart({ productName }: AddToCartProps) {
+interface AddToCartProps {
+  product: ProductForCart;
+}
+
+export default function AddToCart({ product }: AddToCartProps) {
   const [quantity, setQuantity] = useState(1);
+  const { addItem, openCart } = useCart();
 
   function decrement() {
     setQuantity((q) => Math.max(1, q - 1));
@@ -18,11 +29,24 @@ export default function AddToCart({ productName }: AddToCartProps) {
   }
 
   function handleAddToCart() {
-    alert(`Added ${quantity} × "${productName}" to cart`);
+    addItem(
+      {
+        slug:      product.slug,
+        title:     product.title,
+        price:     product.price,
+        imageUrl:  product.imageUrl,
+        size:      product.size,
+        brandName: product.brandName,
+      },
+      quantity
+    );
+    openCart();
+    setQuantity(1);
   }
 
   return (
     <div className="flex gap-3">
+      {/* Quantity stepper */}
       <div className="flex items-center border border-slate-200 rounded">
         <button
           onClick={decrement}
@@ -31,7 +55,7 @@ export default function AddToCart({ productName }: AddToCartProps) {
         >
           -
         </button>
-        <span className="px-4 py-2 text-sm font-medium border-x border-slate-200 min-w-[2.5rem] text-center">
+        <span className="px-4 py-2 text-sm font-medium border-x border-slate-200 min-w-[2.5rem] text-center select-none">
           {quantity}
         </span>
         <button
@@ -42,6 +66,8 @@ export default function AddToCart({ productName }: AddToCartProps) {
           +
         </button>
       </div>
+
+      {/* Add to Cart */}
       <button
         onClick={handleAddToCart}
         className="flex-1 bg-[#6b0f1a] text-white font-semibold py-2 px-6 rounded hover:bg-[#8b1421] transition-colors"

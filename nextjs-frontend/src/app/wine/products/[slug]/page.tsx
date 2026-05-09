@@ -85,7 +85,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {/* Add to Cart — controlled by availableToPurchase in Contentful */}
           {product.availableToPurchase ? (
             <div>
-              <AddToCart productName={product.title} />
+              <AddToCart product={{
+                slug:      product.slug,
+                title:     product.title,
+                price:     product.price,
+                imageUrl:  product.imageUrl,
+                size:      product.size,
+                brandName: product.brandName,
+              }} />
               {product.inventory <= 5 && product.inventory > 0 && (
                 <p className="text-orange-600 text-sm mt-3 font-medium">
                   Only {product.inventory} left in stock
