@@ -1,18 +1,62 @@
 'use client';
 
-// WineShell owns the CartProvider and CartDrawer in a single client boundary.
-// This guarantees WineHeader, CartDrawer, AddToCart, and the cart page
-// all read from and write to the same CartContext instance.
+// WineShell is the single client boundary for the entire wine store.
+// WineHeader, CartDrawer, and the footer are declared HERE as direct JSX —
+// not passed as children from a server component — so they are guaranteed
+// to share the same CartContext instance and state updates work correctly.
 
 import { ReactNode } from 'react';
 import { CartProvider } from '@/lib/cart/context';
+import WineHeader from '@/components/wine/WineHeader';
 import CartDrawer from '@/components/wine/cart/CartDrawer';
 
 export default function WineShell({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
-      {children}
-      <CartDrawer />
+      <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
+        <WineHeader />
+        <main className="flex-1">{children}</main>
+        <CartDrawer />
+        <footer className="bg-[#1a1a1a] text-white py-12">
+          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+            <div>
+              <h4 className="font-semibold text-white mb-3">Shop</h4>
+              <ul className="space-y-2 text-white/60">
+                <li><a href="/wine/category/WINE"    className="hover:text-white transition-colors">Wine</a></li>
+                <li><a href="/wine/category/BEER"    className="hover:text-white transition-colors">Beer</a></li>
+                <li><a href="/wine/category/SPIRITS" className="hover:text-white transition-colors">Spirits</a></li>
+                <li><a href="/wine/category/SAKE"    className="hover:text-white transition-colors">Sake</a></li>
+                <li><a href="/wine/category/CIDER"   className="hover:text-white transition-colors">Cider</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-3">Help</h4>
+              <ul className="space-y-2 text-white/60">
+                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Shipping Policy</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Store Locator</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-3">About</h4>
+              <ul className="space-y-2 text-white/60">
+                <li><a href="/about" className="hover:text-white transition-colors">Our Story</a></li>
+                <li><a href="/jobs"  className="hover:text-white transition-colors">Careers</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-3">Total Wine &amp; More</h4>
+              <p className="text-white/60 text-xs leading-relaxed">
+                America&apos;s largest wine retailer. Over 8,000 wines, 3,000 spirits, and 2,500 beers.
+              </p>
+            </div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 mt-10 pt-6 border-t border-white/10 text-center text-xs text-white/40">
+            Must be 21+ to purchase alcohol. Drink responsibly.
+          </div>
+        </footer>
+      </div>
     </CartProvider>
   );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { useCart } from '@/lib/cart/context';
@@ -13,30 +15,53 @@ function formatPrice(price: number) {
 
 export default function CartDrawer() {
   const { items, totalItems, totalPrice, isOpen, closeCart } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const progress = Math.min((totalPrice / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - totalPrice);
   const freeShipping = totalPrice >= FREE_SHIPPING_THRESHOLD;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <>
-      {/* Dark overlay — clicking closes the drawer */}
+      {/* Dark overlay */}
       <div
         aria-hidden="true"
         onClick={closeCart}
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          zIndex: 40,
+          opacity: isOpen ? 1 : 0,
+          pointerEvents: isOpen ? 'auto' : 'none',
+          transition: 'opacity 300ms',
+        }}
       />
 
       {/* Drawer panel */}
       <div
         role="dialog"
         aria-label="Shopping cart"
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 flex flex-col shadow-2xl
-          transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
-        }`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          height: '100%',
+          width: '100%',
+          maxWidth: '28rem',
+          backgroundColor: 'white',
+          zIndex: 50,
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '-4px 0 24px rgba(0,0,0,0.15)',
+          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 300ms ease-in-out',
+          pointerEvents: isOpen ? 'auto' : 'none',
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
@@ -70,10 +95,13 @@ export default function CartDrawer() {
           )}
           <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                freeShipping ? 'bg-green-500' : 'bg-[#6b0f1a]'
-              }`}
-              style={{ width: `${progress}%` }}
+              style={{
+                height: '100%',
+                width: `${progress}%`,
+                borderRadius: '9999px',
+                backgroundColor: freeShipping ? '#22c55e' : '#6b0f1a',
+                transition: 'width 500ms',
+              }}
             />
           </div>
         </div>
@@ -128,6 +156,7 @@ export default function CartDrawer() {
           </div>
         )}
       </div>
-    </>
+    </>,
+    document.body
   );
 }
