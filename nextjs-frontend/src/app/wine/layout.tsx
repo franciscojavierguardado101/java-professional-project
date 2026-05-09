@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import WineHeader from '@/components/wine/WineHeader';
-import CartDrawer from '@/components/wine/cart/CartDrawer';
-import { CartProvider } from '@/lib/cart/context';
+import WineShell from '@/components/wine/WineShell';
 
 export const metadata: Metadata = {
   title: 'Total Wine & More — Wine, Beer & Spirits',
@@ -10,11 +9,10 @@ export const metadata: Metadata = {
 
 export default function WineLayout({ children }: { children: React.ReactNode }) {
   return (
-    <CartProvider>
+    <WineShell>
       <div className="min-h-screen flex flex-col bg-white">
         <WineHeader />
         <main className="flex-1">{children}</main>
-        <CartDrawer />
         <footer className="bg-[#1a1a1a] text-white py-12">
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
             <div>
@@ -55,6 +53,6 @@ export default function WineLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
       </div>
-    </CartProvider>
+    </WineShell>
   );
 }
