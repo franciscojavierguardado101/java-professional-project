@@ -6,6 +6,7 @@ import com.jobboard.api.entity.Category;
 import com.jobboard.api.entity.Company;
 import com.jobboard.api.entity.Job;
 import com.jobboard.api.exception.ResourceNotFoundException;
+import com.jobboard.api.messaging.JobEventProducer;
 import com.jobboard.api.repository.CategoryRepository;
 import com.jobboard.api.repository.CompanyRepository;
 import com.jobboard.api.repository.JobRepository;
@@ -22,6 +23,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
     private final CategoryRepository categoryRepository;
+    private final JobEventProducer jobEventProducer;
 
     @Transactional(readOnly = true)
     public List<JobResponse> getAllJobs() {
@@ -82,7 +84,9 @@ public class JobService {
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
                 .build();
 
-        return toResponse(jobRepository.save(job));
+        JobResponse response = toResponse(jobRepository.save(job));
+        jobEventProducer.publishJobCreated(response);
+        return response;
     }
 
     @Transactional
@@ -108,7 +112,9 @@ public class JobService {
             job.setIsActive(request.getIsActive());
         }
 
-        return toResponse(jobRepository.save(job));
+        JobResponse response = toResponse(jobRepository.save(job));
+        jobEventProducer.publishJobUpdated(response);
+        return response;
     }
 
     @Transactional
