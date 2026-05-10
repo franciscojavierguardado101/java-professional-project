@@ -48,20 +48,20 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero — content from Contentful when configured */}
-      <section className="bg-slate-900 text-white py-20 px-4">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h1 className="text-5xl font-bold leading-tight tracking-tight">
+      <section className="bg-slate-900 text-white py-12 sm:py-20 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-5">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight">
             {heroTitle}
           </h1>
-          <p className="text-slate-300 text-lg">{heroSubtitle}</p>
-          <div className="flex gap-3 justify-center pt-2">
-            <Link href={heroCtaLink}>
-              <Button size="lg" className="bg-blue-500 hover:bg-blue-600 text-white">
+          <p className="text-slate-300 text-base sm:text-lg">{heroSubtitle}</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Link href={heroCtaLink} className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white">
                 {heroCtaText}
               </Button>
             </Link>
-            <Link href="/companies">
-              <Button size="lg" variant="outline" className="border-slate-600 text-white hover:bg-slate-800">
+            <Link href="/companies" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-slate-500 text-white hover:bg-slate-800 hover:text-white">
                 View Companies
               </Button>
             </Link>
@@ -70,9 +70,9 @@ export default async function HomePage() {
       </section>
 
       {/* Featured Jobs */}
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">Featured Jobs</h2>
+      <section className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Featured Jobs</h2>
           <Link href="/jobs" className="text-sm text-blue-600 hover:underline font-medium">
             View all {jobs.length} jobs →
           </Link>
@@ -85,12 +85,12 @@ export default async function HomePage() {
       </section>
 
       {/* Companies strip */}
-      <section className="border-t bg-white py-12 px-4">
+      <section className="border-t bg-white py-10 sm:py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest mb-8">
+          <h2 className="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6 sm:mb-8">
             Hiring Now
           </h2>
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
             {companies.map((company) => (
               <Link
                 key={company.id}
