@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import MobileMenu from './MobileMenu';
 
 export default function Header() {
   return (
-    <header className="bg-white sticky top-0 z-50 shadow-sm">
+    <header className="bg-white sticky top-0 z-50 shadow-sm" style={{ position: 'relative' }}>
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold text-slate-900 tracking-tight">
           JobBoard
         </Link>
-        <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
+
+        {/* Desktop nav — hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <Link href="/bio" className="hover:text-slate-900 transition-colors">
             Bio
           </Link>
@@ -28,6 +31,9 @@ export default function Header() {
             Wine Store
           </Link>
         </nav>
+
+        {/* Mobile hamburger — hidden on desktop */}
+        <MobileMenu />
       </div>
       <Separator />
     </header>
