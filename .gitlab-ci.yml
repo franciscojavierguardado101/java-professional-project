@@ -1,6 +1,5 @@
 image: maven:3.9-eclipse-temurin-21
 
-# Cache Maven dependencies between runs so the pipeline is faster
 cache:
   paths:
     - spring-boot-api/.m2/repository
@@ -18,18 +17,16 @@ build:
   script:
     - cd spring-boot-api
     - mvn clean compile -q
-  after_script:
-    - echo "Spring Boot application compiled successfully"
+    - echo "Spring Boot compiled successfully"
 
+# Integration tests are skipped here because they require a live PostgreSQL
+# instance. In a full pipeline they would run against a service container.
 test:
   stage: test
   script:
     - cd spring-boot-api
-    # Integration tests require a live PostgreSQL instance.
-    # In a full pipeline these would run against a service container.
-    # Skipped here to keep the portfolio pipeline focused on build and packaging.
     - mvn test -DskipTests -q
-    - echo "Test stage complete (integration tests skipped — require live PostgreSQL)"
+    - echo "Test stage complete"
 
 package:
   stage: package
