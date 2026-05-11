@@ -23,7 +23,20 @@ export default async function JobDetailPage({ params }: Props) {
   } catch (err: unknown) {
     const status = (err as { status?: number }).status;
     if (status === 404) notFound();
-    throw err;
+    // Network error — API is unreachable (env var not set or API down)
+    return (
+      <div className="max-w-xl mx-auto px-4 py-24 text-center space-y-4">
+        <h2 className="text-xl font-semibold text-slate-800">API Unavailable</h2>
+        <p className="text-slate-500 text-sm">
+          Could not connect to the Spring Boot API. Make sure{' '}
+          <code className="bg-slate-100 px-1 rounded">NEXT_PUBLIC_API_URL</code> is set in Vercel
+          and the Railway service is running.
+        </p>
+        <Link href="/jobs" className="text-blue-600 hover:underline text-sm">
+          ← Back to Jobs
+        </Link>
+      </div>
+    );
   }
 
   const salary = formatSalary(job.salaryMin, job.salaryMax);

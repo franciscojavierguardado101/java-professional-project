@@ -22,7 +22,19 @@ export default async function CompanyDetailPage({ params }: Props) {
   } catch (err: unknown) {
     const status = (err as { status?: number }).status;
     if (status === 404) notFound();
-    throw err;
+    return (
+      <div className="max-w-xl mx-auto px-4 py-24 text-center space-y-4">
+        <h2 className="text-xl font-semibold text-slate-800">API Unavailable</h2>
+        <p className="text-slate-500 text-sm">
+          Could not connect to the Spring Boot API. Make sure{' '}
+          <code className="bg-slate-100 px-1 rounded">NEXT_PUBLIC_API_URL</code> is set in Vercel
+          and the Railway service is running.
+        </p>
+        <Link href="/companies" className="text-blue-600 hover:underline text-sm">
+          ← Back to Companies
+        </Link>
+      </div>
+    );
   }
 
   const companyJobs = allJobs.filter((job) => job.companyId === companyId);
