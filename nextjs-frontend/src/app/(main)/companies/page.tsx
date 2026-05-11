@@ -1,8 +1,8 @@
 import { getCompanies } from '@/lib/api';
 import { Company } from '@/types';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import CompanyLogo from '@/components/CompanyLogo';
 
 export const metadata = {
   title: 'Companies — JobBoard',
@@ -36,19 +36,7 @@ export default async function CompaniesPage() {
               <Card className="hover:shadow-md hover:border-slate-300 transition-all cursor-pointer h-full">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
-                    {company.logoUrl ? (
-                      <Image
-                        src={company.logoUrl}
-                        alt={company.name}
-                        width={48}
-                        height={48}
-                        className="rounded-lg object-contain flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg flex-shrink-0">
-                        {company.name.charAt(0)}
-                      </div>
-                    )}
+                    <CompanyLogo name={company.name} logoUrl={company.logoUrl} size={48} />
                     <h2 className="font-semibold text-slate-900">{company.name}</h2>
                   </div>
                 </CardHeader>

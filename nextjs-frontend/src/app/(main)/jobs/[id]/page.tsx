@@ -1,7 +1,7 @@
 import { getJob } from '@/lib/api';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
+import CompanyLogo from '@/components/CompanyLogo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -71,15 +71,7 @@ export default async function JobDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {job.companyLogoUrl && (
-            <Image
-              src={job.companyLogoUrl}
-              alt={job.companyName}
-              width={72}
-              height={72}
-              className="rounded-lg object-contain flex-shrink-0"
-            />
-          )}
+          <CompanyLogo name={job.companyName} logoUrl={job.companyLogoUrl} size={72} />
         </div>
 
         <Separator className="my-6" />

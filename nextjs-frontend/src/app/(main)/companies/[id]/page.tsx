@@ -1,7 +1,7 @@
 import { getCompany, getJobs } from '@/lib/api';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
+import CompanyLogo from '@/components/CompanyLogo';
 import { Separator } from '@/components/ui/separator';
 import JobCard from '@/components/JobCard';
 
@@ -36,19 +36,7 @@ export default async function CompanyDetailPage({ params }: Props) {
       {/* Company header */}
       <div className="bg-white rounded-xl border p-8 mb-8">
         <div className="flex items-center gap-5">
-          {company.logoUrl ? (
-            <Image
-              src={company.logoUrl}
-              alt={company.name}
-              width={80}
-              height={80}
-              className="rounded-xl object-contain flex-shrink-0"
-            />
-          ) : (
-            <div className="w-20 h-20 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-3xl flex-shrink-0">
-              {company.name.charAt(0)}
-            </div>
-          )}
+          <CompanyLogo name={company.name} logoUrl={company.logoUrl} size={80} />
           <div>
             <h1 className="text-2xl font-bold text-slate-900">{company.name}</h1>
             {company.website && (
