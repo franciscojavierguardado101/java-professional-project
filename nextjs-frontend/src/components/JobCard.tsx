@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Job } from '@/types';
+import CompanyLogo from './CompanyLogo';
 
 interface Props {
   job: Job;
@@ -42,15 +42,7 @@ export default function JobCard({ job }: Props) {
               <h3 className="font-semibold text-slate-900 leading-snug">{job.title}</h3>
               <p className="text-sm text-slate-500 mt-0.5">{job.companyName}</p>
             </div>
-            {job.companyLogoUrl && (
-              <Image
-                src={job.companyLogoUrl}
-                alt={job.companyName}
-                width={40}
-                height={40}
-                className="rounded object-contain flex-shrink-0"
-              />
-            )}
+            <CompanyLogo name={job.companyName} logoUrl={job.companyLogoUrl} />
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
