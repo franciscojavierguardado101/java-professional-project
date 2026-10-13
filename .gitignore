@@ -17,6 +17,9 @@ nextjs-frontend/.env*.local
 *.iml
 .vscode/
 
+# Vercel CLI config (never commit — contains project IDs and env tokens)
+.vercel/
+
 # Local documentation — interview prep, resume notes (not for repo)
 *.docx
 *.doc
