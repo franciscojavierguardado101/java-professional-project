@@ -30,6 +30,12 @@ export default function Header() {
           >
             Wine Store
           </Link>
+          <Link
+            href="/dataset"
+            className="bg-slate-800 text-white px-3 py-1.5 rounded text-xs font-semibold hover:bg-slate-700 transition-colors"
+          >
+            Dataset
+          </Link>
         </nav>
 
         {/* Mobile hamburger — hidden on desktop */}

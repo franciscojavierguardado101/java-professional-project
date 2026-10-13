@@ -16,3 +16,8 @@ nextjs-frontend/.env*.local
 .idea/
 *.iml
 .vscode/
+
+# Local documentation — interview prep, resume notes (not for repo)
+*.docx
+*.doc
+TECH_STACK.md

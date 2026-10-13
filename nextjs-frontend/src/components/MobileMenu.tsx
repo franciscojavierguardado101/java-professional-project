@@ -9,6 +9,7 @@ const links = [
   { href: '/jobs',      label: 'Browse Jobs' },
   { href: '/companies', label: 'Companies' },
   { href: '/about',     label: 'About' },
+  { href: '/dataset',   label: 'Dataset' },
 ];
 
 export default function MobileMenu() {
@@ -86,6 +87,20 @@ export default function MobileMenu() {
               }}
             >
               Wine Store
+            </Link>
+            <Link
+              href="/dataset"
+              onClick={() => setOpen(false)}
+              style={{
+                padding: '14px 20px',
+                fontSize: '15px',
+                fontWeight: 600,
+                color: '#ffffff',
+                backgroundColor: '#1e293b',
+                textDecoration: 'none',
+              }}
+            >
+              Dataset
             </Link>
           </nav>
         </div>
