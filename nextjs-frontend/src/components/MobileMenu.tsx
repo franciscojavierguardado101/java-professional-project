@@ -10,6 +10,7 @@ const links = [
   { href: '/companies', label: 'Companies' },
   { href: '/about',     label: 'About' },
   { href: '/dataset',   label: 'Dataset' },
+  { href: '/space',     label: 'Space'   },
 ];
 
 export default function MobileMenu() {

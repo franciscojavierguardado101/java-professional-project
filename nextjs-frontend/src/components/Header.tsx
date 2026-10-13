@@ -36,6 +36,12 @@ export default function Header() {
           >
             Dataset
           </Link>
+          <Link
+            href="/space"
+            className="bg-indigo-950 text-indigo-300 px-3 py-1.5 rounded text-xs font-semibold hover:bg-indigo-900 transition-colors"
+          >
+            Space
+          </Link>
         </nav>
 
         {/* Mobile hamburger — hidden on desktop */}
