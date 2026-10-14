@@ -34,7 +34,6 @@ export default function WineHeader() {
           <div className="flex gap-4">
             <Link href="/bio"     className="hover:underline">Bio</Link>
             <Link href="/wine"    className="hover:underline">Wine Store</Link>
-            <Link href="/jobs"    className="hover:underline">Job Board</Link>
             <Link href="/dataset" className="hover:underline">Dataset</Link>
             <Link href="/space"   className="hover:underline">Space</Link>
           </div>
