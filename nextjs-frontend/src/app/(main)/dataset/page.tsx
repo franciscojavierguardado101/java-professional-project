@@ -63,7 +63,7 @@ export default async function DatasetPage() {
             title="Top 15 US Colleges by Graduate Earnings"
             description="Median annual earnings of graduates measured 10 years after initial enrollment, sorted highest to lowest. Data highlights the outsized returns from specialized medical and engineering institutions."
             source="US Department of Education — College Scorecard API"
-            sourceUrl="https://collegescorecard.ed.gov/data/documentation/"
+            sourceUrl="https://collegescorecard.ed.gov/data/api-documentation/"
           >
             <EarningsBarChart data={earnings} />
           </ChartCard>
@@ -92,7 +92,7 @@ export default async function DatasetPage() {
               title="Enrollment Size vs Graduate Earnings"
               description="Each point is a US institution. The cluster pattern shows that higher earnings are not strongly correlated with enrollment size — small specialized schools often outperform large universities."
               source="US Department of Education — College Scorecard API"
-              sourceUrl="https://collegescorecard.ed.gov/data/documentation/"
+              sourceUrl="https://collegescorecard.ed.gov/data/api-documentation/"
             >
               <EnrollmentScatterChart data={enrollment} />
             </ChartCard>
