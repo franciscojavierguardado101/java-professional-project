@@ -5,12 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const links = [
-  { href: '/bio',       label: 'Bio' },
-  { href: '/jobs',      label: 'Browse Jobs' },
-  { href: '/companies', label: 'Companies' },
-  { href: '/about',     label: 'About' },
-  { href: '/dataset',   label: 'Dataset' },
-  { href: '/space',     label: 'Space'   },
+  { href: '/bio',     label: 'Bio'     },
+  { href: '/about',   label: 'About'   },
+  { href: '/dataset', label: 'Dataset' },
+  { href: '/space',   label: 'Space'   },
 ];
 
 export default function MobileMenu() {

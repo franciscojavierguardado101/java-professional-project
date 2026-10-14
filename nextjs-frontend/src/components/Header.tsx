@@ -15,12 +15,6 @@ export default function Header() {
           <Link href="/bio" className="hover:text-slate-900 transition-colors">
             Bio
           </Link>
-          <Link href="/jobs" className="hover:text-slate-900 transition-colors">
-            Browse Jobs
-          </Link>
-          <Link href="/companies" className="hover:text-slate-900 transition-colors">
-            Companies
-          </Link>
           <Link href="/about" className="hover:text-slate-900 transition-colors">
             About
           </Link>
